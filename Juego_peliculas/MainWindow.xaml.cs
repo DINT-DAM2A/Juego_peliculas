@@ -15,14 +15,47 @@ using System.Windows.Shapes;
 
 namespace Juego_peliculas
 {
-    /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        MainWindowVM vm = new MainWindowVM();
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = vm;
+        }
+
+        private void CargarJsonBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.CargarPeliculasJson();
+        }
+
+        private void GuardarJsonBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.GuardarPeliculasJson();
+        }
+        private void EditarPeliculaBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.EditPelicula();
+        }
+
+        private void EliminarPeliculaBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.RemovePelicula();
+        }
+
+        private void ExaminarImagenBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.AddImageUrl();
+        }
+
+        private void ResetearFormularioBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ResetForm();
+        }
+
+        private void AnadirPeliculaBoton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.AddPelicula();
         }
     }
 }
