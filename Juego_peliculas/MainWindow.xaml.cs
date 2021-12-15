@@ -22,6 +22,8 @@ namespace Juego_peliculas
         {
             InitializeComponent();
             DataContext = vm;
+
+            PuntuacionTextBox.Text = "1- \n2- \n3- \n4- \n5-";
         }
 
         private void CargarJsonBoton_Click(object sender, RoutedEventArgs e)

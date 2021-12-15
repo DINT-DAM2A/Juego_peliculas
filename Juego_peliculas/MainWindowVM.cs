@@ -75,8 +75,8 @@ namespace Juego_peliculas
         {
             //Comprueba que todos los campos esten rellenados
             if (PeliculaSeleccionada.Cartel != null && PeliculaSeleccionada.Cartel != "" && PeliculaSeleccionada.Genero != null && PeliculaSeleccionada.Genero != ""
-                && PeliculaSeleccionada.Nivel != null && PeliculaSeleccionada.Nivel != "" && PeliculaSeleccionada.Pista != null && PeliculaSeleccionada.Pista != ""
-                && PeliculaSeleccionada.Titulo != null && PeliculaSeleccionada.Titulo != "")
+            && PeliculaSeleccionada.Nivel != null && PeliculaSeleccionada.Nivel != "" && PeliculaSeleccionada.Pista != null && PeliculaSeleccionada.Pista != ""
+            && PeliculaSeleccionada.Titulo != null && PeliculaSeleccionada.Titulo != "")
             {
                 //Añade nueva pelicula
                 listaPeliculas.Add(PeliculaSeleccionada);
