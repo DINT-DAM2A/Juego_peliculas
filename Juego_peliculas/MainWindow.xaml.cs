@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Juego_peliculas
 {
@@ -20,10 +8,10 @@ namespace Juego_peliculas
         MainWindowVM vm = new MainWindowVM();
         public MainWindow()
         {
+            //Ha veces da error "InitializeComponent no existe en el contexto actual"
+            //Pero funciona bien
             InitializeComponent();
             DataContext = vm;
-
-            PuntuacionTextBox.Text = "1- \n2- \n3- \n4- \n5-";
         }
 
         private void CargarJsonBoton_Click(object sender, RoutedEventArgs e)
@@ -58,6 +46,36 @@ namespace Juego_peliculas
         private void AnadirPeliculaBoton_Click(object sender, RoutedEventArgs e)
         {
             vm.AddPelicula();
+        }
+
+        private void NuevaPartidaButton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.IniciarPartida();
+        }
+
+        private void FinalizarPartidaButton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.FinalizarPartida();
+        }
+
+        private void ValidarTituloButton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ValidarPeliculaAdivinada();
+        }
+
+        private void PeliculaAnteriorImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm.AnteriorPelicula();
+        }
+
+        private void PeliculaSiguienteImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm.SiguientePelicula();
+        }
+
+        private void PistaCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            vm.ActualizarEstadoPista();
         }
     }
 }

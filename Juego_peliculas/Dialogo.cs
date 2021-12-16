@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.IO;
 using System.Windows.Forms;
 
 namespace Juego_peliculas
@@ -77,7 +71,7 @@ namespace Juego_peliculas
 
         public static void CamposVacios()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "No pueden haber campos vacíos.",
                 "ERROR - Campos Vacíos",
                 MessageBoxButtons.OK,
@@ -86,7 +80,7 @@ namespace Juego_peliculas
 
         public static void ErrorDeserializarJson()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Error al Deserializar el fichero Json.\nEs posible que no tenga el formato adecuado.",
                 "ERROR al Deserializar desde Json",
                 MessageBoxButtons.OK,
@@ -95,7 +89,7 @@ namespace Juego_peliculas
 
         public static void ErrorSerializarJson()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Error al Serializar el fichero Json.\nEs posible que se deba a la falta de permisos o a un error de formato.",
                 "ERROR al Serializar al Json",
                 MessageBoxButtons.OK,
@@ -104,7 +98,7 @@ namespace Juego_peliculas
 
         public static void ErrorAbrirFichero(string ruta)
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Imposible Abrir el fichero seleccionado.\n" + ruta,
                 "ERROR al abrir el fichero",
                 MessageBoxButtons.OK,
@@ -113,7 +107,7 @@ namespace Juego_peliculas
 
         public static void ErrorGuardarFichero()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Error al Guardar el fichero.",
                 "ERROR",
                 MessageBoxButtons.OK,
@@ -122,7 +116,7 @@ namespace Juego_peliculas
 
         public static void ErrorGuardarImgAzure()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Error al Guardar la imágen en el servidor.",
                 "ERROR - Azure",
                 MessageBoxButtons.OK,
@@ -131,7 +125,7 @@ namespace Juego_peliculas
 
         public static void ExitoFicheroGuardado()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "Se ha guardado el fichero con éxito.",
                 "Fichero Guardado",
                 MessageBoxButtons.OK,
@@ -140,11 +134,48 @@ namespace Juego_peliculas
 
         public static void FicheroNoGuardado()
         {
-            System.Windows.Forms.MessageBox.Show(
+            MessageBox.Show(
                 "El fichero no se ha guardado.\nSi cierras la aplicación, se perderán todos los cambios.",
                 "No se ha guardado",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
+        }
+
+        public static void FaltanPeliculas()
+        {
+            MessageBox.Show(
+                "Para iniciar una partida, tienen que haber mínimo 5 películas agregadas.\nAñada más películas, para cumplir con el requisito mínimo.",
+                "Error - Añada más películas",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+        public static void PeliculaAdivinada(string titulo = "")
+        {
+            MessageBox.Show(
+                "Enhorabuena - Has adivinado la película " + titulo + ".",
+                "Enhorabuena!!!",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        public static void TituloIncorrecto(string titulo)
+        {
+            MessageBox.Show(
+                "Error - El titulo de la película a adivinar NO es: " + titulo + ".",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+        public static void PartidaGanada(int puntuacion)
+        {
+            MessageBox.Show(
+                "¡Enhorabuena! \nHas adivinado todas las películas." +
+                "\nPuntuación obtenida: " + puntuacion,
+                "¡Enhorabuena! - Has Ganado",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
     }
 }

@@ -4,6 +4,14 @@ namespace Juego_peliculas
 {
     class Pelicula : ObservableObject
     {
+        public Pelicula()
+        {
+            Titulo = "";
+            Pista = "";
+            Cartel = "";
+            Nivel = "";
+            Genero = "";
+        }
 
         private string titulo;
         public string Titulo

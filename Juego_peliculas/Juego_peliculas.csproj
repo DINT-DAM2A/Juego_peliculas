@@ -121,6 +121,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AzureStorage.cs" />
+    <Compile Include="ConversorIconoGenero.cs" />
+    <Compile Include="ConversorNivelColor.cs" />
+    <Compile Include="ConversorNivelOpacidad.cs" />
     <Compile Include="Dialogo.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -164,6 +167,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\accion.png" />
+    <Resource Include="img\cienciaFriccion.png" />
+    <Resource Include="img\comedia.png" />
+    <Resource Include="img\drama.png" />
+    <Resource Include="img\terror.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\victoria.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
