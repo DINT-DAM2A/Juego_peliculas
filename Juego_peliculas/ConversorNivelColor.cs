@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Juego_peliculas
@@ -15,13 +11,13 @@ namespace Juego_peliculas
             switch (value.ToString())
             {
                 case "Fácil":
-                    return "LightGreen";
+                    return "#CDDC39";
                 case "Media":
-                    return "LightSalmon";
+                    return "#FFC107";
                 case "Difícil":
-                    return "IndianRed";
+                    return "#FF5722";
             }
-            return "White";
+            return "#FFECB3";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

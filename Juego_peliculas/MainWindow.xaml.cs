@@ -8,8 +8,6 @@ namespace Juego_peliculas
         MainWindowVM vm = new MainWindowVM();
         public MainWindow()
         {
-            //Ha veces da error "InitializeComponent no existe en el contexto actual"
-            //Pero funciona bien
             InitializeComponent();
             DataContext = vm;
         }

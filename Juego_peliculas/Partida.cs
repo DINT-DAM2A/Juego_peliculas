@@ -32,12 +32,20 @@ namespace Juego_peliculas
 
         public int GetPuntuacionFromIndex(int index)
         {
-            return ArrayPuntuacion[index];
+            if (index >= 0 && index < ArrayPuntuacion.Length)
+            {
+                return ArrayPuntuacion[index];
+            }
+
+            return 0;
         }
 
         public void SetPuntuacionForIndex(int index, int puntuacion)
         {
-            ArrayPuntuacion[index] = puntuacion;
+            if (index >= 0 && index < ArrayPuntuacion.Length)
+            {
+                ArrayPuntuacion[index] = puntuacion;
+            }
         }
 
         public int LengthArrayPuntuacion()
@@ -53,12 +61,19 @@ namespace Juego_peliculas
 
         public bool GetEstadoPistaFromIndex(int index)
         {
-            return ArrayPistasActivadas[index];
+            if (index >= 0 && index < ArrayPistasActivadas.Length)
+            {
+                return ArrayPistasActivadas[index];
+            }
+            return false;
         }
 
         public void SetEstadoPistaForIndex(int index, bool estado)
         {
-            ArrayPistasActivadas[index] = estado;
+            if (index >= 0 && index < ArrayPistasActivadas.Length)
+            {
+                ArrayPistasActivadas[index] = estado;
+            }
         }
 
         public bool TodasPeliculasAdivinadas()

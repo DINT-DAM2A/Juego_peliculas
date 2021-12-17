@@ -123,7 +123,7 @@
     <Compile Include="AzureStorage.cs" />
     <Compile Include="ConversorIconoGenero.cs" />
     <Compile Include="ConversorNivelColor.cs" />
-    <Compile Include="ConversorNivelOpacidad.cs" />
+    <Compile Include="ConversorNivelBlur.cs" />
     <Compile Include="Dialogo.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -177,6 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\victoria.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\imagenVacia.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

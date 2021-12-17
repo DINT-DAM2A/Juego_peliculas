@@ -5,6 +5,10 @@ namespace Juego_peliculas
 {
     class Dialogo
     {
+        private Dialogo()
+        {
+        }
+
         //Abre el Dialogo en el cual se selecciona el fichero a leer y devuelve la ruta en formato
         //string, en caso de error, devuelve "-1" y si el usuario cancela la lectura, devuelve "0"
         //Como parametro, recibe una cadena que indica el tipo de archivo a leer
@@ -176,6 +180,36 @@ namespace Juego_peliculas
                 "¡Enhorabuena! - Has Ganado",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        public static bool ReiniciarPartida()
+        {
+            DialogResult boton = MessageBox.Show(
+               "¿Quieres reiniciar la partida?\nPerderás el progreso actual!",
+               "¿Reiniciar Partida?",
+               MessageBoxButtons.YesNo,
+               MessageBoxIcon.Question,
+               MessageBoxDefaultButton.Button2);
+
+            if (boton == DialogResult.No)
+                return false;
+            else
+                return true;
+        }
+
+        public static bool FinalizarPartida()
+        {
+            DialogResult boton = MessageBox.Show(
+               "¿Quieres finalizar la partida?\nPerderás el progreso actual!",
+               "¿Finalizar Partida?",
+               MessageBoxButtons.YesNo,
+               MessageBoxIcon.Question,
+               MessageBoxDefaultButton.Button2);
+
+            if (boton == DialogResult.No)
+                return false;
+            else
+                return true;
         }
     }
 }

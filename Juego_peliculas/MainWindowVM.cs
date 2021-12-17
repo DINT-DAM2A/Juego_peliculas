@@ -11,18 +11,13 @@ namespace Juego_peliculas
     class MainWindowVM : ObservableObject
     {
         private int indexPeliculaActual;
-        Partida partida;
+        private readonly Partida partida;
 
         public MainWindowVM()
         {
             partida = new Partida();
-            listaPeliculas = new ObservableCollection<Pelicula>();
-            ListaPeliculasPartida = new ArrayList();
+            ListaPeliculasMemoria = new ObservableCollection<Pelicula>();
             peliculaSeleccionada = new Pelicula();
-            PeliculaActualPartida = new Pelicula();
-            ContadorPeliculas = "0/0";
-
-            indexPeliculaActual = -1;
 
             //Datos ComboBox Dificultad
             listaDificultad = new ObservableCollection<string>();
@@ -43,14 +38,12 @@ namespace Juego_peliculas
             string rutaJsonAbsoluta = Path.GetFullPath(rutaJsonRelativa);
             CargarPeliculasJson(rutaJsonAbsoluta);
 
-            ActualizarPuntuacion();
+            RestablecerVentanaPartida();
 
             // Inicializa ItemSelect (False -> Controles Activados)
             ItemSelect = false;
             //Inicializa BtnAddActivo(True -> Boton añadir pelicula = activado)
             BtnAddActivo = true;
-            PartidaIniciada = false;
-            PistaActualActivada = false;
         }
 
         // Inicio Propiedades de Partida  >>>>>
@@ -107,11 +100,11 @@ namespace Juego_peliculas
 
         // Fin Propiedades de Partida  <<<<<<<<
 
-        private ObservableCollection<Pelicula> listaPeliculas;
-        public ObservableCollection<Pelicula> ListaPeliculas
+        private ObservableCollection<Pelicula> listaPeliculasMemoria;
+        public ObservableCollection<Pelicula> ListaPeliculasMemoria
         {
-            get { return listaPeliculas; }
-            set { SetProperty(ref listaPeliculas, value); }
+            get { return listaPeliculasMemoria; }
+            set { SetProperty(ref listaPeliculasMemoria, value); }
         }
 
         private ObservableCollection<string> listaDificultad;
@@ -159,12 +152,14 @@ namespace Juego_peliculas
         public void AddPelicula()
         {
             //Comprueba que todos los campos esten rellenados
-            if (PeliculaSeleccionada.Cartel != null && PeliculaSeleccionada.Cartel != "" && PeliculaSeleccionada.Genero != null && PeliculaSeleccionada.Genero != ""
-            && PeliculaSeleccionada.Nivel != null && PeliculaSeleccionada.Nivel != "" && PeliculaSeleccionada.Pista != null && PeliculaSeleccionada.Pista != ""
-            && PeliculaSeleccionada.Titulo != null && PeliculaSeleccionada.Titulo != "")
+            if (PeliculaSeleccionada.Cartel != null && PeliculaSeleccionada.Cartel != ""
+                && PeliculaSeleccionada.Genero != null && PeliculaSeleccionada.Genero != ""
+                && PeliculaSeleccionada.Nivel != null && PeliculaSeleccionada.Nivel != ""
+                && PeliculaSeleccionada.Pista != null && PeliculaSeleccionada.Pista != ""
+                && PeliculaSeleccionada.Titulo != null && PeliculaSeleccionada.Titulo != "")
             {
                 //Añade nueva pelicula
-                listaPeliculas.Add(PeliculaSeleccionada);
+                ListaPeliculasMemoria.Add(PeliculaSeleccionada);
 
                 // Se pone a NULL para perder el Focus sobre el item
                 PeliculaSeleccionada = null;
@@ -197,9 +192,10 @@ namespace Juego_peliculas
 
         public void RemovePelicula()
         {
-            ListaPeliculas.Remove(PeliculaSeleccionada);
+            ListaPeliculasMemoria.Remove(PeliculaSeleccionada);
             // ItemSelect False = Controles Activados
             ItemSelect = false;
+            BtnAddActivo = true;
         }
 
         //Deserializa peliculas desde Json y las añade a la lista existente
@@ -207,11 +203,14 @@ namespace Juego_peliculas
         {
             string rutaFichero;
 
+
             switch (rutaFicheroJson)
             {
+                //Si no recibe una ruta, abre el Dialogo, para elegir el fichero Json/Txt
                 case "":
                     rutaFichero = Dialogo.LeerRutaFichero("json");
                     break;
+                //Si recibe una ruta, la envia para Deserializar
                 default:
                     rutaFichero = rutaFicheroJson;
                     break;
@@ -229,7 +228,7 @@ namespace Juego_peliculas
 
                         foreach (Pelicula p in lista)
                         {
-                            ListaPeliculas.Add(p);
+                            ListaPeliculasMemoria.Add(p);
                         }
                     }
                     else
@@ -251,7 +250,7 @@ namespace Juego_peliculas
         //Serializa peliculas en Json
         public void GuardarPeliculasJson()
         {
-            string cadenaJson = Json.SerializarPeliculas(listaPeliculas);
+            string cadenaJson = Json.SerializarPeliculas(listaPeliculasMemoria);
 
             if (cadenaJson != null)
             {
@@ -303,26 +302,45 @@ namespace Juego_peliculas
         public void IniciarPartida()
         {
             //Carga las 5 peliculas aleatorias en memoria
-            if (ListaPeliculas.Count > 4)
+            if (ListaPeliculasMemoria.Count > 4)
             {
-                ListaPeliculasPartida.Clear();
-                indexPeliculaActual = 0;
-                PartidaIniciada = true;
-                PistaActualActivada = partida.GetEstadoPistaFromIndex(indexPeliculaActual);
-                Random rnd = new Random();
-                ArrayList indices = new ArrayList();
-                int i = 0;
-
-                while (i < 5)
+                if (!PartidaIniciada)
                 {
-                    int n = rnd.Next(0, ListaPeliculas.Count);
+                    //Resetea las propiedades de la partida
+                    RestablecerVentanaPartida();
+                    PartidaIniciada = true;
 
-                    if (!indices.Contains(n))
+                    //Genera una lista de peliculas aleatorias para la partida
+                    Random rnd = new Random();
+                    ArrayList indices = new ArrayList();
+                    int i = 0;
+
+                    while (i < 5)
                     {
-                        indices.Add(n);
-                        i++;
+                        int n = rnd.Next(0, ListaPeliculasMemoria.Count);
 
-                        ListaPeliculasPartida.Add(ListaPeliculas[n]);
+                        if (!indices.Contains(n))
+                        {
+                            indices.Add(n);
+                            i++;
+
+                            ListaPeliculasPartida.Add(ListaPeliculasMemoria[n]);
+                        }
+                    }
+
+                    //Asigna la primera pelicula de la lista a la Pelicula bindeada con la ventana de "PARTIDA"
+                    PeliculaActualPartida = (Pelicula)ListaPeliculasPartida[0];
+                    //Inicializa el Contador que indica el indice de la pelicula actual por Adivinar
+                    MostrarContadorPeliculas();
+                }
+                else
+                {
+                    bool reiniciar = Dialogo.ReiniciarPartida();
+
+                    if (reiniciar)
+                    {
+                        PartidaIniciada = false;
+                        IniciarPartida();
                     }
                 }
             }
@@ -330,16 +348,11 @@ namespace Juego_peliculas
             {
                 Dialogo.FaltanPeliculas();
             }
-
-            //Asigna la primera pelicula de la lista a la Pelicula bindeada con la ventana de "PARTIDA"
-            PeliculaActualPartida = (Pelicula)ListaPeliculasPartida[0];
-            //Inicializa el Contador que se Muestra
-            MostrarContadorPeliculas();
         }
 
         public void ValidarPeliculaAdivinada()
         {
-            if (TituloPorValidar != null && TituloPorValidar != "")
+            if (PartidaIniciada && TituloPorValidar != null && TituloPorValidar != "")
             {
                 //Quitamos los acentos tanto al titulo introducido como al titulo de la pelicula guardada
                 //y los dos titulos se transforman en minusculas
@@ -353,7 +366,6 @@ namespace Juego_peliculas
                 {
                     if (tituloIn2.Equals(tituloP2))
                     {
-
                         int puntos = 0;
 
                         switch (PeliculaActualPartida.Nivel)
@@ -400,13 +412,21 @@ namespace Juego_peliculas
         private void ActualizarPuntuacion()
         {
             //Se construye la cadena String con la puntuacion
-            string puntuacion = "Puntuacion: ";
+            string puntuacion = "";
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Puntuacion: ");
 
             for (int i = 0; i < partida.LengthArrayPuntuacion(); i++)
             {
-                puntuacion += "\n" + (i + 1) + "- " + partida.GetPuntuacionFromIndex(i);
+                puntuacion = "\n" + (i + 1) + "- " + partida.GetPuntuacionFromIndex(i);
+                sb.Append(puntuacion);
             }
-            puntuacion += "\n\nTotal: " + partida.GetPuntuacionTotal();
+
+            puntuacion = "\n\nTotal: " + partida.GetPuntuacionTotal();
+            sb.Append(puntuacion);
+
+            //Cadena final con los datos de Puntuacion
+            puntuacion = sb.ToString();
 
             //Se asigna la puntuacion con el Propiedad Bindeada
             PuntuacionString = puntuacion;
@@ -414,23 +434,33 @@ namespace Juego_peliculas
 
         public void SiguientePelicula()
         {
-            if (PartidaIniciada && indexPeliculaActual + 1 < 5)
-            {
-                TituloPorValidar = "";
-                PistaActualActivada = false;
-                indexPeliculaActual++;
-                PeliculaActualPartida = (Pelicula)ListaPeliculasPartida[indexPeliculaActual];
-                MostrarContadorPeliculas();
-                PistaActualActivada = partida.GetEstadoPistaFromIndex(indexPeliculaActual);
-            }
+            MostrarPeliculaActual("siguiente");
         }
         public void AnteriorPelicula()
         {
-            if (PartidaIniciada && indexPeliculaActual - 1 >= 0)
+            MostrarPeliculaActual("anterior");
+        }
+
+        private void MostrarPeliculaActual(string accion)
+        {
+            if (PartidaIniciada)
             {
+                //Suma o Resta el index, según el paramentro
+                switch (accion)
+                {
+                    case "siguiente":
+                        if (PartidaIniciada && indexPeliculaActual + 1 < 5)
+                            indexPeliculaActual++;
+                        break;
+                    case "anterior":
+                        if (PartidaIniciada && indexPeliculaActual - 1 >= 0)
+                            indexPeliculaActual--;
+                        break;
+                }
+
+                //Actualiza los datos segun el index
                 TituloPorValidar = "";
                 PistaActualActivada = false;
-                indexPeliculaActual--;
                 PeliculaActualPartida = (Pelicula)ListaPeliculasPartida[indexPeliculaActual];
                 MostrarContadorPeliculas();
                 PistaActualActivada = partida.GetEstadoPistaFromIndex(indexPeliculaActual);
@@ -439,23 +469,42 @@ namespace Juego_peliculas
 
         private void MostrarContadorPeliculas()
         {
+            //Muestra el Contador que indica el indice de la pelicula actual por Adivinar
+            //y la cantidad de Peliculas Total en la partida actual
             ContadorPeliculas = "" + (indexPeliculaActual + 1) + "/" + partida.LengthArrayPuntuacion();
+        }
+
+        private void RestablecerVentanaPartida()
+        {
+            //Resetea todas las propiedades de la partida
+            ListaPeliculasPartida = new ArrayList();
+            PeliculaActualPartida = new Pelicula();
+            PeliculaActualPartida.Cartel = "img\\imagenVacia.png";
+            TituloPorValidar = "";
+            ContadorPeliculas = "0/0";
+            indexPeliculaActual = 0;
+            PartidaIniciada = false;
+            PistaActualActivada = false;
+            ActualizarPuntuacion();
+
+            //Restablece los valores de las listas Puntuacion y EstadoPista
+            partida.FinalizarPartida();
         }
 
         public void FinalizarPartida()
         {
-            PartidaIniciada = false;
-            PistaActualActivada = false;
-            PeliculaActualPartida = new Pelicula();
-            ListaPeliculasPartida = new ArrayList();
-            ContadorPeliculas = "0/0";
-            partida.FinalizarPartida();
-            ActualizarPuntuacion();
-            TituloPorValidar = "";
+            if (PartidaIniciada)
+            {
+                bool finalizar = Dialogo.FinalizarPartida();
+
+                if (finalizar)
+                    RestablecerVentanaPartida();
+            }
         }
 
         public void ActualizarEstadoPista()
         {
+            //Asigna el estado de la pista de la pelicula actual TRUE/FALSE
             if (partidaIniciada)
                 partida.SetEstadoPistaForIndex(indexPeliculaActual, PistaActualActivada);
         }

@@ -8,20 +8,20 @@ using System.Windows.Data;
 
 namespace Juego_peliculas
 {
-    class ConversorNivelOpacidad : IValueConverter
+    class ConversorNivelBlur : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch (value.ToString())
             {
                 case "Fácil":
-                    return "0.07";
+                    return "20";
                 case "Media":
-                    return "0.05";
+                    return "30";
                 case "Difícil":
-                    return "0.03";
+                    return "40";
             }
-            return "1";
+            return "0";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

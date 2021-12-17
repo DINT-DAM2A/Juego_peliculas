@@ -7,22 +7,24 @@
         mc:Ignorable="d"
         Icon="img/movie.ico"
         WindowStartupLocation="CenterScreen"
-        Title="Películas" Height="600" Width="900" MinHeight="600" MinWidth="900">
+        Title="Películas" Height="600" Width="900" MinHeight="600" MinWidth="940">
 
     <!-- ESTILOS ************************************************-->
     <Window.Resources>
         <local:ConversorIconoGenero x:Key="ConvertidorIconoGenero"></local:ConversorIconoGenero>
-        <local:ConversorNivelOpacidad x:Key="ConvertidorNivelOpacidad"></local:ConversorNivelOpacidad>
+        <local:ConversorNivelBlur x:Key="ConvertidorNivelBlur"></local:ConversorNivelBlur>
         <local:ConversorNivelColor x:Key="ConvertidorNivelColor"></local:ConversorNivelColor>
 
         <!-- Diseño de los Items de ListBox -->
         <DataTemplate DataType="{x:Type local:Pelicula}">
-            <StackPanel Orientation="Vertical" Width="125" Height="230" Margin="10">
-                <Image Source="{Binding Path=Cartel}" Height="190"></Image>
-                <Viewbox Height="40">
-                    <TextBlock Text="{Binding Path=Titulo}"></TextBlock>
-                </Viewbox>
-            </StackPanel>
+            <Border Padding="10" BorderThickness="1" BorderBrush="Gray" Background="{Binding Path=Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelColor}}">
+                <StackPanel Orientation="Vertical" Width="150" Height="230">
+                    <Image Source="{Binding Path=Cartel}" Height="190" Stretch="UniformToFill" Margin="5,5,5,0"></Image>
+                    <Viewbox Height="40">
+                        <TextBlock Text="{Binding Path=Titulo}"></TextBlock>
+                    </Viewbox>
+                </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- Triger para Pestaña de TabControl/Gestionar -->
@@ -81,8 +83,27 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Estilo Principal de Todos Botones -->
+        <Style TargetType="{x:Type Button}" >
+            <Setter Property="Template" Value="{DynamicResource PlantillaBotones}"/>
+        </Style>
+
+        <!-- Boton Validar Titulo -->
+        <Style TargetType="Button" x:Key="ValidarButton" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Grid.Row" Value="1"/>
+            <Setter Property="Grid.Column" Value="1"/>
+            <Setter Property="Margin" Value="10,25,10,10"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Content" Value="Validar"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <EventSetter Event="Click" Handler="ValidarTituloButton_Click"/>
+        </Style>
+
         <!-- Botones Editar y Eliminar -->
-        <Style TargetType="Button" x:Key="EditRemoveButton">
+        <Style TargetType="Button" x:Key="EditRemoveButton" BasedOn="{StaticResource {x:Type Button}}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=ItemSelect, UpdateSourceTrigger=PropertyChanged}" Value="False">
                     <Setter Property="IsEnabled" Value="False"/>
@@ -93,7 +114,9 @@
             </Style.Triggers>
         </Style>
         <!-- Boton Examinar Imagen -->
-        <Style TargetType="Button" x:Key="ExaminarImgButton">
+        <Style TargetType="Button" x:Key="ExaminarImgButton" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Content" Value="Examinar Imágen"/>
+            <EventSetter Event="Click" Handler="ExaminarImagenBoton_Click"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=ItemSelect, UpdateSourceTrigger=PropertyChanged}" Value="False">
                     <Setter Property="IsEnabled" Value="True"/>
@@ -104,7 +127,10 @@
             </Style.Triggers>
         </Style>
         <!-- Boton Añadir Pelicula -->
-        <Style TargetType="Button" x:Key="AddPeliculaButton">
+        <Style TargetType="Button" x:Key="AddPeliculaButton" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Content" Value="Añadir Película"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <EventSetter Event="Click" Handler="AnadirPeliculaBoton_Click"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=BtnAddActivo, UpdateSourceTrigger=PropertyChanged}" Value="False">
                     <Setter Property="IsEnabled" Value="False"/>
@@ -118,7 +144,8 @@
 
     <!-- DISEÑO VENTANA *************************************************************-->
     <Grid>
-        <TabControl Background="{Binding Path=PeliculaActualPartida.Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelColor}}">
+
+        <TabControl Background="{Binding Path=PeliculaActualPartida.Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelColor}}" SelectedIndex="1">
             <!-- Pestaña JUGAR -->
             <TabItem Header="Jugar" Width="100">
                 <Grid Margin="10">
@@ -132,9 +159,13 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Imagen de la Película -->
-                    <Image x:Name="ImagenPeliculaJuego" Grid.Row="0" Grid.Column="0" 
+                    <Image Grid.Row="0" Grid.Column="0"
                            Source="{Binding Path=PeliculaActualPartida.Cartel, UpdateSourceTrigger=PropertyChanged}" 
-                           Margin="0,10,0.4,10" Opacity="{Binding Path=PeliculaActualPartida.Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelOpacidad}}"></Image>
+                           Margin="0,10,0.4,10">
+                        <Image.Effect>
+                            <BlurEffect Radius="{Binding Path=PeliculaActualPartida.Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelBlur}}"/>
+                        </Image.Effect>
+                    </Image>
 
                     <!-- Bloque inferior con las Flechas -->
                     <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
@@ -160,10 +191,10 @@
                             <RowDefinition></RowDefinition>
                             <RowDefinition Height="0.5*"></RowDefinition>
                             <RowDefinition Height="0.5*"></RowDefinition>
-                            <RowDefinition ></RowDefinition>
+                            <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                            <ColumnDefinition Width="2.5*"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
@@ -177,26 +208,25 @@
 
                         <!-- 1 Fila / Botones -->
                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left">
-                            <Button x:Name="NuevaPartidaButton" Margin="10,25,10,10" Content="Nueva partida" Width="100" Click="NuevaPartidaButton_Click"></Button>
-                            <Button x:Name="FinalizarPartidaButton" Margin="10,0,10,10" Content="Finalizar partida" Width="100" Click="FinalizarPartidaButton_Click"></Button>
+                            <Button x:Name="NuevaPartidaButton" Margin="10,25,10,10" Content="Nueva partida" Width="120" Click="NuevaPartidaButton_Click"></Button>
+                            <Button x:Name="FinalizarPartidaButton" Margin="10,0,10,10" Content="Finalizar partida" Width="120" Click="FinalizarPartidaButton_Click"></Button>
                         </StackPanel>
 
                         <!-- 2 Fila / Bloque para adivinar el Titulo -->
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock Text="Título de la película:"></TextBlock>
-                            <TextBox Text="{Binding Path=TituloPorValidar}"></TextBox>
+                            <TextBox Text="{Binding Path=TituloPorValidar}" Template="{DynamicResource PlantillaTextBoxPersonal}"></TextBox>
                         </StackPanel>
-                        <Button x:Name="ValidarTituloButton" Grid.Row="1" Grid.Column="1" Margin="10,25,10,10" Width="100" Height="20" Content="Validar" VerticalAlignment="Center" HorizontalAlignment="Left" Click="ValidarTituloButton_Click"></Button>
+                        <Button Style="{StaticResource ValidarButton}"></Button>
 
                         <!-- 3 Fila / Bloque Pista -->
                         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
                             <CheckBox Content="Ver pista" Checked="PistaCheckBox_Checked" IsChecked="{Binding Path=PistaActualActivada, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
-                            <TextBox IsEnabled="False" Text="{Binding Path=PeliculaActualPartida.Pista, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MostrarPistaTextBox}"></TextBox>
+                            <TextBox IsEnabled="False" Text="{Binding Path=PeliculaActualPartida.Pista, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MostrarPistaTextBox}" Template="{DynamicResource PlantillaTextBoxPista}"></TextBox>
                         </StackPanel>
 
                         <!-- 4 Fila / Bloque Genero -->
-                        <Image Source="{Binding Path=PeliculaActualPartida.Genero, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorIconoGenero}}" Stretch="Uniform" Grid.Row="3" Grid.Column="0"></Image>
-
+                        <Image Source="{Binding Path=PeliculaActualPartida.Genero, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorIconoGenero}}" Stretch="Uniform" Grid.Row="3" Grid.Column="0"/>
                     </Grid>
 
                 </Grid>
@@ -208,18 +238,20 @@
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition Height="120"></RowDefinition>
-                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="10*"></ColumnDefinition>
-                        <ColumnDefinition Width="169*"/>
+                        <ColumnDefinition Width="21*"></ColumnDefinition>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="349*"/>
                         <ColumnDefinition Width="150"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <!-- ListBox con las peliculas -->
                     <ListBox Grid.Row="0" Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                             ItemsSource="{Binding Path=ListaPeliculas}"
-                             SelectedItem="{Binding Path=PeliculaSeleccionada}" Grid.ColumnSpan="2">
+                             ItemsSource="{Binding Path=ListaPeliculasMemoria}"
+                             SelectedItem="{Binding Path=PeliculaSeleccionada}" Grid.ColumnSpan="3"
+                             Background="{Binding Path=Nivel, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ConvertidorNivelColor}}" Margin="0,0,0.4,0.4">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel></WrapPanel>
@@ -228,7 +260,7 @@
                     </ListBox>
 
                     <!-- Bloque de la izquierda con el formulario -->
-                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,10" Grid.ColumnSpan="2">
+                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,9.6,0.4,10.4" Grid.ColumnSpan="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="130"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
@@ -251,7 +283,7 @@
                     </Grid>
 
                     <!-- Bloque de la izquierda, debajo del formulario -->
-                    <StackPanel  Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="110,0,150,0">
+                    <StackPanel  Grid.Column="2" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="112.8,119.6,170.4,0" Grid.RowSpan="2">
                         <!-- ComboBox Nivel Dificultad -->
                         <TextBlock Text="Nivel de dificultad" VerticalAlignment="Center" FontWeight="Bold"></TextBlock>
                         <ComboBox x:Name="DificultadComboBox" Margin="10,0" Height="25" Width="70" ItemsSource="{Binding Path=ListaDificultad}" SelectedItem="{Binding Path=PeliculaSeleccionada.Nivel, UpdateSourceTrigger=PropertyChanged}"></ComboBox>
@@ -262,24 +294,23 @@
                     </StackPanel>
 
                     <!-- Bloque con botones a la derecha del ListBox con Peliculas -->
-                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="10,10,0,10">
-                        <Button x:Name="CargarJsonBoton" Content="Cargar de JSON" Margin="5" Click="CargarJsonBoton_Click" ></Button>
-                        <Button x:Name="GuardarJsonBoton" Content="Guardar en JSON" Margin="5" Click="GuardarJsonBoton_Click"></Button>
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="9.6,10,-0.6,10.4">
+                        <Button Content="Cargar de JSON" Margin="5" Click="CargarJsonBoton_Click" ></Button>
+                        <Button Content="Guardar en JSON" Margin="5" Click="GuardarJsonBoton_Click"></Button>
 
-                        <Button x:Name="EditarPeliculaBoton" Content="Editar película" Margin="5,30,5,5" Style="{StaticResource EditRemoveButton}" RenderTransformOrigin="0.5,0.505" Click="EditarPeliculaBoton_Click" Template="{DynamicResource PlantillaBotonDeshabilitado}"></Button>
-                        <Button x:Name="EliminarPeliculaBoton" Content="Eliminar película" Margin="5" Style="{StaticResource EditRemoveButton}" Click="EliminarPeliculaBoton_Click" Template="{DynamicResource PlantillaBotonDeshabilitado}"></Button>
+                        <Button Content="Editar película" Margin="5,30,5,5" Style="{StaticResource EditRemoveButton}" Click="EditarPeliculaBoton_Click"></Button>
+                        <Button Content="Eliminar película" Margin="5" Style="{StaticResource EditRemoveButton}" Click="EliminarPeliculaBoton_Click"></Button>
                     </StackPanel>
 
                     <!-- Bloque con botones a la derecha del formulario -->
-                    <StackPanel Grid.Column="2" Grid.Row="1" Margin="10,0,0,16" Orientation="Vertical" VerticalAlignment="Bottom">
-                        <Button x:Name="ExaminarImagenBoton" Content="Examinar Imágen" Click="ExaminarImagenBoton_Click" Style="{StaticResource ExaminarImgButton}" Template="{DynamicResource PlantillaBotonDeshabilitado}"></Button>
+                    <StackPanel Grid.Column="3" Grid.Row="1" Margin="9.6,0,-0.6,16.4" Orientation="Vertical" VerticalAlignment="Bottom">
+                        <Button Style="{StaticResource ExaminarImgButton}"></Button>
                     </StackPanel>
 
                     <!-- Bloque con botones a la derecha del formulario -->
-                    <StackPanel Grid.Column="2" Grid.Row="2" Margin="10,0,0,0" Orientation="Vertical" VerticalAlignment="Top">
+                    <StackPanel Grid.Column="3" Grid.Row="1" Margin="9.6,119.6,-0.6,0" Orientation="Vertical" VerticalAlignment="Top" Grid.RowSpan="2">
                         <Button x:Name="ResetearFormularioBoton" Content="Resetear Formulario" Click="ResetearFormularioBoton_Click"></Button>
-
-                        <Button x:Name="AnadirPeliculaBoton" Content="Añadir Película" Margin="0,5" Click="AnadirPeliculaBoton_Click" Style="{StaticResource AddPeliculaButton}" Template="{DynamicResource PlantillaBotonDeshabilitado}"></Button>
+                        <Button Style="{StaticResource AddPeliculaButton}"></Button>
                     </StackPanel>
 
                 </Grid>
